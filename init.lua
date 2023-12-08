@@ -112,7 +112,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -191,7 +191,7 @@ require('lazy').setup({
   {
     -- Theme inspired by Atom
     'navarasu/onedark.nvim',
-    priority = 1000,
+    priority = 1500,
     config = function()
       vim.cmd.colorscheme 'onedark'
     end,
@@ -256,8 +256,8 @@ require('lazy').setup({
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.autoformat',
+  require 'kickstart.plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -265,7 +265,7 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {})
 
 -- [[ Setting options ]]
@@ -655,5 +655,49 @@ cmp.setup {
   },
 }
 
+-- Custom keybinds
+
+-- Neotree keybinds
+
+vim.keymap.set('n', '\\', function()
+    local cwd = vim.fn.getcwd()
+
+    require('neo-tree.command').execute({
+      action = "focus",  -- OPTIONAL, this is the default value
+      toggle = true,
+      reveal_file = cwd, -- path to file or folder to reveal
+      reveal_force_cwd = true,
+    })
+  end,
+  { desc = "Open neo-tree at current file or working directory" }
+);
+
+-- Floating terminal (FTerm) keybinds
+
+local fterm = require("FTerm")
+
+vim.keymap.set('n', '<M-f>', function()
+    fterm:toggle()
+  end,
+  { desc = "Open a floating terminal" }
+);
+
+local gitui = fterm:new({
+  ft = 'fterm_gitui', -- You can also override the default filetype, if you want
+  cmd = "gitui -t aura.ron",
+  dimensions = {
+    height = 0.9,
+    width = 0.9,
+    x = 0.5,
+    y = 0.5
+  }
+})
+
+-- Use this to toggle gitui in a floating terminal
+vim.keymap.set('n', '<M-g>', function()
+    gitui:toggle()
+  end,
+  { desc = "Open a git terminal" }
+)
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
